@@ -50,7 +50,26 @@ def train(model, device, train_loader, criterion, scheduler, optimizer, use_l1=F
         pbar.set_description(desc= f'Batch_id={batch_idx} Loss={train_loss/(batch_idx + 1):.5f} Accuracy={100*correct/processed:0.2f}%')
     return 100*correct/processed, train_loss/(batch_idx + 1), lr_trend
 
+def test(model, device, test_loader, criterion):
+   
+    model.eval()
+    test_loss = 0
+    correct = 0
+    #iteration = len(test_loader.dataset)// test_loader.batch_size
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += criterion(output, target).item()  # sum up batch loss
+            pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+            correct += pred.eq(target.view_as(pred)).sum().item()
 
+    test_loss /= len(test_loader)
+
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)'.format(
+        test_loss, correct, len(test_loader.dataset),
+        100. * correct / len(test_loader.dataset)))
+    return 100. * correct / len(test_loader.dataset), test_loss
 
 def save_model(model, epoch, optimizer, path):
     """Save torch model in .pt format
