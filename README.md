@@ -1,5 +1,5 @@
 
-# Transformer implementation from scratch for CIFAR10
+# Transformer implementation  for CIFAR10
 
 This repository contains the scratch implementation of a simple **Transformer** architecture for the CIFAR10 dataset.
 
